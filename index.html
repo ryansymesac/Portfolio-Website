@@ -702,6 +702,190 @@
 
   /* ── TILT CARDS (JS) ── */
   .tilt { transform-style: preserve-3d; }
+
+  /* ── UNAVAILABLE DOT ── */
+  .nav-avail-dot--off {
+    background: #c0452a;
+    box-shadow: none;
+    animation: none;
+  }
+
+  /* ── NAV AVAIL WRAP (multiple badges) ── */
+  .nav-avail-wrap {
+    display: flex; align-items: center; gap: 0.6rem;
+    position: relative;
+  }
+  .nav-avail--clickable { cursor: pointer; }
+
+  /* ── INTERNSHIP FORM DROPDOWN ── */
+  .internship-form-panel {
+    position: absolute; top: calc(100% + 0.8rem); left: 0;
+    background: rgba(10,8,4,0.97);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    padding: 1.4rem;
+    min-width: 280px;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .internship-form-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .if-title {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+  }
+  .if-field {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.6rem;
+    outline: none;
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .if-field:focus { border-color: rgba(200,168,75,0.5); }
+  .if-field::placeholder { color: var(--muted); }
+  .if-textarea { resize: vertical; min-height: 80px; }
+  .if-submit {
+    width: 100%;
+    background: var(--gold); color: var(--ink);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 0.7rem; cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    margin-top: 0.2rem;
+  }
+  .if-submit:hover { background: var(--cream); }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    body { cursor: auto; }
+    #cursor, #cursor-ring { display: none; }
+
+    /* NAV — hide "Unavailable for Work" badge to save space; keep internship badge */
+    nav { padding: 1rem 1.2rem; }
+    .nav-right { display: none; }
+    .nav-left { gap: 0.6rem; align-items: center; flex-wrap: nowrap; }
+    .nav-avail-wrap { gap: 0.4rem; }
+    /* hide the work-unavailable pill on mobile — too wide */
+    .nav-avail:first-child { display: none; }
+    .nav-avail { font-size: 0.48rem; padding: 0.22rem 0.55rem; white-space: nowrap; }
+
+    /* HERO */
+    #hero {
+      padding: 6.5rem 1.2rem 5rem;
+      min-height: 100svh;
+      justify-content: flex-end;
+    }
+    .hero-bg-text {
+      font-size: clamp(5rem, 28vw, 8rem);
+      opacity: 0.6;
+    }
+    .hero-tag {
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      margin-bottom: 1rem;
+      white-space: normal;
+    }
+    .hero-name {
+      font-size: clamp(3.2rem, 14vw, 5.5rem);
+      line-height: 0.9;
+    }
+    .hero-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+    .hero-desc {
+      max-width: 100%;
+      font-size: 0.74rem;
+      line-height: 1.7;
+    }
+    .hero-cta {
+      width: 100%;
+      justify-content: center;
+      padding: 0.9rem 1.5rem;
+      box-sizing: border-box;
+    }
+    .scroll-hint { display: none; }
+
+    /* SECTIONS — global padding */
+    section { padding: 4.5rem 1.2rem; }
+
+    /* WORK */
+    #work { padding-top: 3.5rem; }
+    .work-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; margin-bottom: 2rem; }
+    .work-count { font-size: 3rem; }
+    .work-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .work-card:nth-child(1),
+    .work-card:nth-child(2),
+    .work-card:nth-child(3),
+    .work-card:nth-child(4) { grid-column: 1 / -1 !important; grid-row: auto !important; }
+    .work-card:nth-child(1) .card-img,
+    .work-card:nth-child(3) .card-img { aspect-ratio: 16/10; }
+
+    /* ABOUT */
+    #about { grid-template-columns: 1fr; gap: 2.5rem; }
+    .about-visual { height: 220px; }
+    .stats-row { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
+    .stat-wrap { text-align: center; }
+    .stat-num { font-size: 2.2rem; }
+    .stat-tooltip { left: 50%; transform: translateX(-50%) translateY(0); }
+    .stat-wrap.has-tooltip:hover .stat-tooltip { transform: translateX(-50%) translateY(0); }
+
+    /* SKILLS — "What I Do Best" */
+    #skills { padding: 4.5rem 1.2rem; }
+    #skills .section-title { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 0; }
+    /* 2-column grid on mobile — fits side by side nicely */
+    .skills-grid {
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 2.5rem;
+    }
+    .skill-cell {
+      padding: 1.2rem 1rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    /* remove double border on the right edge of 2-col layout */
+    .skill-cell:nth-child(2n) { border-right: none; }
+    .skill-icon { font-size: 1.2rem; margin-bottom: 0.7rem; }
+    .skill-name { font-size: 1rem; margin-bottom: 0.35rem; }
+    .skill-desc { font-size: 0.62rem; line-height: 1.7; }
+    .skill-bar-wrap { margin-top: 1rem; }
+
+    /* PROCESS */
+    #process { padding: 4.5rem 1.2rem; }
+    .process-steps { flex-direction: column; align-items: center; gap: 3rem; }
+    .process-steps::before { display: none; }
+    .process-step { text-align: center; padding: 0; max-width: 300px; }
+    .step-num { margin: 0 auto 1.5rem; }
+
+    /* CONTACT */
+    #contact { padding: 4.5rem 1.2rem 3.5rem; }
+    .social-row { flex-wrap: wrap; gap: 1.2rem; }
+
+    /* FOOTER */
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem 1.2rem; }
+
+    /* INTERNSHIP FORM — anchor it right-aligned so it doesn't clip */
+    .internship-form-panel { left: auto; right: -1rem; min-width: 260px; }
+  }
+
+  /* Extra small phones (< 400px) */
+  @media (max-width: 400px) {
+    .hero-name { font-size: clamp(2.8rem, 16vw, 3.5rem); }
+    .skills-grid { grid-template-columns: 1fr; }
+    .skill-cell:nth-child(2n) { border-right: 1px solid var(--border); }
+    .nav-avail { display: none; }
+    .nav-logo { font-size: 1.4rem; }
+  }
 </style>
 </head>
 <body>
@@ -712,8 +896,18 @@
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-left">
-    <a href="#" class="nav-logo">RS</a>
-    <span class="nav-avail"><span class="nav-avail-dot"></span>Available</span>
+    <a href="index.html" class="nav-logo">RS</a>
+    <div class="nav-avail-wrap">
+      <span class="nav-avail"><span class="nav-avail-dot nav-avail-dot--off"></span>Unavailable for Work</span>
+      <span class="nav-avail nav-avail--clickable" id="internship-btn"><span class="nav-avail-dot"></span>Available for Internships</span>
+      <div class="internship-form-panel" id="internship-panel">
+        <div class="if-title">Send Internship Inquiry</div>
+        <input class="if-field" type="text" id="if-name" placeholder="Your Name" autocomplete="off">
+        <input class="if-field" type="text" id="if-subject" placeholder="Subject" autocomplete="off">
+        <textarea class="if-field if-textarea" id="if-message" placeholder="Tell me about the internship opportunity..."></textarea>
+        <button class="if-submit" onclick="sendInternshipEmail()">Send Email →</button>
+      </div>
+    </div>
   </div>
   <div class="nav-right">
     <ul class="nav-links">
@@ -927,7 +1121,7 @@
         </div>
       </div>
       <div class="stat-wrap has-tooltip">
-        <span class="stat-num">60+</span>
+        <span class="stat-num">10+</span>
         <span class="stat-label">Projects Delivered</span>
         <div class="stat-tooltip">
           <div class="stat-tooltip-item">Brand Identities</div>
@@ -964,37 +1158,37 @@
 
   <div class="skills-grid">
     <div class="skill-cell" data-n="01">
-      <span class="skill-icon">◈</span>
+      <span class="skill-icon">✏</span>
       <div class="skill-name">Brand Identity</div>
       <div class="skill-desc">Full visual identity systems from logo to brand guidelines. Built to scale, built to last.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.95"></div></div>
     </div>
     <div class="skill-cell" data-n="02">
-      <span class="skill-icon">⊞</span>
+      <span class="skill-icon">☰</span>
       <div class="skill-name">Editorial Design</div>
       <div class="skill-desc">Magazines, books, annual reports — layouts where every grid line is deliberate.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.88"></div></div>
     </div>
     <div class="skill-cell" data-n="03">
-      <span class="skill-icon">▷</span>
+      <span class="skill-icon">▶</span>
       <div class="skill-name">Motion Graphics</div>
       <div class="skill-desc">Bringing static brands to life through animation, loop graphics & title sequences.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.8"></div></div>
     </div>
     <div class="skill-cell" data-n="04">
-      <span class="skill-icon">Aa</span>
+      <span class="skill-icon">⌗</span>
       <div class="skill-name">Web Design</div>
       <div class="skill-desc">Custom lettering, type pairings, and the fine craft of making words beautiful on a page.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.97"></div></div>
     </div>
     <div class="skill-cell" data-n="05">
-      <span class="skill-icon">⬡</span>
+      <span class="skill-icon">⬚</span>
       <div class="skill-name">Product Design</div>
       <div class="skill-desc">Consumer goods, luxury products, small batch — design that earns its shelf space.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.82"></div></div>
     </div>
     <div class="skill-cell" data-n="06">
-      <span class="skill-icon">⊙</span>
+      <span class="skill-icon">◎</span>
       <div class="skill-name">Art Direction</div>
       <div class="skill-desc">Creative leadership for shoots, campaigns & multi-channel launches from concept through delivery.</div>
       <div class="skill-bar-wrap"><div class="skill-bar" style="--pct:0.9"></div></div>
@@ -1042,7 +1236,7 @@
     Open to brand projects, long-term creative partnerships,<br>
     and the occasional very interesting brief.
   </p>
-  <a class="contact-email" href="mailto:hello@ryansymes.com">hello@ryansymes.com</a>
+  <a class="contact-email" href="mailto:ryansymes11@gmail.com">ryansymes11@gmail.com</a>
 
   <div class="social-row">
     <a class="social-link" href="#">Instagram</a>
@@ -1166,6 +1360,32 @@ const counterObserver = new IntersectionObserver(entries => {
   }
 }, { threshold: 0.3 });
 if (aboutSection) counterObserver.observe(aboutSection);
+
+// ── INTERNSHIP FORM TOGGLE
+const internshipBtn = document.getElementById('internship-btn');
+const internshipPanel = document.getElementById('internship-panel');
+if (internshipBtn && internshipPanel) {
+  internshipBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    internshipPanel.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#internship-panel') && !e.target.closest('#internship-btn')) {
+      internshipPanel.classList.remove('open');
+    }
+  });
+  internshipPanel.addEventListener('click', e => e.stopPropagation());
+}
+
+function sendInternshipEmail() {
+  const name = document.getElementById('if-name').value.trim();
+  const subject = document.getElementById('if-subject').value.trim();
+  const message = document.getElementById('if-message').value.trim();
+  if (!name || !subject || !message) { alert('Please fill in all fields.'); return; }
+  const body = 'From: ' + name + '\n\n' + message;
+  window.location.href = 'mailto:ryansymes11@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  internshipPanel.classList.remove('open');
+}
 </script>
 </body>
 </html>
