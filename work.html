@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Work — Ryan Symes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0804;
+    --cream: #f2ead8;
+    --gold: #c8a84b;
+    --rust: #c0452a;
+    --ink: #1a160e;
+    --muted: #6b5f47;
+    --border: rgba(200,168,75,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed; z-index: 9999;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; z-index: 9998;
+    width: 40px; height: 40px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.4s ease, height 0.4s ease, opacity 0.3s ease;
+    opacity: 0.6;
+  }
+  body.hovering #cursor { width: 20px; height: 20px; background: var(--rust); }
+  body.hovering #cursor-ring { width: 60px; height: 60px; opacity: 0.3; }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 9997;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 2rem 3rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s, background 0.4s, padding 0.4s;
+    background: rgba(10,8,4,0.92);
+    border-color: var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .nav-left { display: flex; align-items: center; gap: 1.2rem; }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 0.12em;
+    color: var(--gold); text-decoration: none;
+    transition: letter-spacing 0.3s ease, opacity 0.2s;
+  }
+  .nav-logo:hover { letter-spacing: 0.22em; opacity: 0.85; }
+  .nav-avail {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.7rem; border-radius: 999px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .nav-avail:hover { color: var(--cream); border-color: rgba(200,168,75,0.5); }
+  .nav-avail-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #4caf7d;
+    box-shadow: 0 0 0 0 rgba(76,175,125,0.6);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(76,175,125,0.6); }
+    60%  { box-shadow: 0 0 0 6px rgba(76,175,125,0); }
+    100% { box-shadow: 0 0 0 0 rgba(76,175,125,0); }
+  }
+  .nav-right { display: flex; align-items: center; gap: 2.5rem; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cream); text-decoration: none; opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s; position: relative;
+  }
+  .nav-links a::before {
+    content: attr(data-num);
+    position: absolute; top: -0.9rem; left: 0;
+    font-size: 0.5rem; letter-spacing: 0.1em; color: var(--gold);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--gold); }
+  .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+  .nav-links a:hover::before { opacity: 1; transform: translateY(0); }
+  .nav-cta {
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bg); background: var(--gold);
+    text-decoration: none; padding: 0.55rem 1.2rem;
+    border: 1px solid var(--gold);
+    transition: background 0.25s, color 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .nav-cta:hover { background: transparent; color: var(--gold); transform: translateY(-1px); }
+  .nav-dropdown-wrap { position: relative; }
+  .nav-dropdown-wrap::after {
+    content: '';
+    position: absolute; top: 100%; left: -1rem; right: -1rem;
+    height: 1.6rem;
+  }
+  .nav-chevron {
+    display: inline-block; font-size: 0.8em;
+    transition: transform 0.25s ease; transform-origin: center 60%;
+  }
+  .nav-dropdown-wrap:hover .nav-chevron,
+  .nav-dropdown-wrap.open .nav-chevron { transform: rotate(180deg); }
+  .nav-dropdown {
+    position: absolute; top: calc(100% + 1.4rem); left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: rgba(10,8,4,0.97);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    min-width: 200px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .nav-dropdown-wrap:hover .nav-dropdown,
+  .nav-dropdown-wrap.open .nav-dropdown {
+    opacity: 1; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .nav-dropdown::before {
+    content: '';
+    position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+    width: 8px; height: 8px;
+    background: var(--gold); opacity: 0.6;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+  .nav-dropdown-item {
+    display: flex; flex-direction: column;
+    padding: 1rem 1.4rem; text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .nav-dropdown-item:last-child { border-bottom: none; }
+  .nav-dropdown-item:hover { background: rgba(200,168,75,0.06); }
+  .ndi-label {
+    font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cream); transition: color 0.2s;
+  }
+  .nav-dropdown-item:hover .ndi-label { color: var(--gold); }
+  .ndi-sub {
+    font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.2rem;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding: 10rem 3rem 5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 2rem;
+  }
+  .page-header-left { max-width: 600px; }
+  .page-label {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .page-label::before {
+    content: ''; display: inline-block;
+    width: 2rem; height: 1px; background: var(--gold);
+  }
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 0.9; letter-spacing: 0.04em;
+    color: var(--cream);
+  }
+  .page-title em {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic; color: var(--gold);
+  }
+  .page-header-right {
+    text-align: right;
+  }
+  .project-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem; line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(200,168,75,0.25);
+  }
+  .project-count-label {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.3rem;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    padding: 2rem 3rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-label {
+    font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-right: 1rem; white-space: nowrap;
+  }
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); background: none;
+    border: 1px solid transparent;
+    padding: 0.4rem 1rem;
+    cursor: none; white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .filter-btn:hover { color: var(--cream); border-color: var(--border); }
+  .filter-btn.active { color: var(--gold); border-color: var(--gold); }
+
+  /* ── WORK ARCHIVE GRID ── */
+  .work-archive {
+    padding: 3rem 3rem 6rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .arc-card {
+    display: block; text-decoration: none; color: inherit;
+    background: rgba(242,234,216,0.03);
+    border: 1px solid var(--border);
+    overflow: hidden; position: relative;
+    cursor: none;
+    transition: border-color 0.4s, opacity 0.4s, transform 0.4s;
+  }
+  .arc-card:hover { border-color: var(--gold); }
+  .arc-card.hidden { opacity: 0; pointer-events: none; transform: scale(0.97); }
+
+  /* Grid layout — varied card sizes */
+  .arc-card:nth-child(1)  { grid-column: 1 / 8;  }
+  .arc-card:nth-child(2)  { grid-column: 8 / 13; }
+  .arc-card:nth-child(3)  { grid-column: 1 / 5;  }
+  .arc-card:nth-child(4)  { grid-column: 5 / 9;  }
+  .arc-card:nth-child(5)  { grid-column: 9 / 13; }
+  .arc-card:nth-child(6)  { grid-column: 1 / 6;  }
+  .arc-card:nth-child(7)  { grid-column: 6 / 13; }
+  .arc-card:nth-child(8)  { grid-column: 1 / 5;  }
+  .arc-card:nth-child(9)  { grid-column: 5 / 9;  }
+  .arc-card:nth-child(10) { grid-column: 9 / 13; }
+
+  .arc-card-img {
+    width: 100%; overflow: hidden; position: relative;
+    aspect-ratio: 16/10;
+  }
+  .arc-card:nth-child(1) .arc-card-img { aspect-ratio: 16/9; }
+  .arc-card:nth-child(3) .arc-card-img,
+  .arc-card:nth-child(8) .arc-card-img { aspect-ratio: 4/5; }
+  .arc-card:nth-child(6) .arc-card-img { aspect-ratio: 3/2; }
+
+  .arc-card-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    transform: scale(1);
+    transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .arc-card:hover .arc-card-inner { transform: scale(1.05); }
+
+  /* Card visuals */
+  .vis-a { background: linear-gradient(135deg, #1a1208, #2d200a, #3d2f10); }
+  .vis-b { background: linear-gradient(200deg, #0d1a1a, #0a1510, #1a2a1a); }
+  .vis-c { background: linear-gradient(160deg, #1a0d0d, #2a1010); }
+  .vis-d { background: linear-gradient(120deg, #0d0d1a, #101025); }
+  .vis-e { background: linear-gradient(145deg, #0d1410, #162010, #0a1a12); }
+  .vis-f { background: linear-gradient(170deg, #180808, #2a0e0e, #1a0a0a); }
+  .vis-g { background: linear-gradient(130deg, #12100a, #1e1a08, #2a2410); }
+  .vis-h { background: linear-gradient(155deg, #080d18, #0a1020, #101828); }
+  .vis-i { background: linear-gradient(110deg, #14100a, #201808, #2c2210); }
+  .vis-j { background: linear-gradient(175deg, #0a1208, #101a10, #182418); }
+
+  .arc-card-info {
+    padding: 1.4rem 1.5rem;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+  .arc-card-meta { flex: 1; }
+  .arc-card-year {
+    font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .arc-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem; margin-bottom: 0.3rem;
+    transition: color 0.2s;
+  }
+  .arc-card:hover .arc-card-title { color: var(--gold); }
+  .arc-card-cat {
+    font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .arc-card-arrow {
+    font-size: 1.2rem; color: var(--muted); margin-left: 1rem; margin-top: 0.2rem;
+    transition: color 0.2s, transform 0.3s;
+  }
+  .arc-card:hover .arc-card-arrow { color: var(--gold); transform: translate(3px, -3px); }
+
+  /* ── SVG PLACEHOLDERS ── */
+  .geo { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .geo-ring {
+    border: 1px solid rgba(200,168,75,0.12);
+    border-radius: 50%; position: absolute;
+    animation: spin 25s linear infinite;
+  }
+  .geo-ring:nth-child(2) { animation-direction: reverse; animation-duration: 35s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── REVEAL ANIMATION ── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in-view { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-left">
+    <a href="RYANSYMES-PORTFOLIO-CLUADECODE.html" class="nav-logo">RS</a>
+    <span class="nav-avail"><span class="nav-avail-dot"></span>Available</span>
+  </div>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li class="nav-dropdown-wrap">
+        <a href="RYANSYMES-PORTFOLIO-CLUADECODE.html#work" data-num="01" class="nav-dropdown-trigger active">Work <span class="nav-chevron">&#8964;</span></a>
+        <div class="nav-dropdown">
+          <a href="RYANSYMES-PORTFOLIO-CLUADECODE.html#work" class="nav-dropdown-item">
+            <span class="ndi-label">Featured Work</span>
+            <span class="ndi-sub">Selected projects</span>
+          </a>
+          <a href="work.html" class="nav-dropdown-item">
+            <span class="ndi-label">All Work</span>
+            <span class="ndi-sub">Full archive</span>
+          </a>
+        </div>
+      </li>
+      <li><a href="RYANSYMES-PORTFOLIO-CLUADECODE.html#about" data-num="02">About</a></li>
+      <li><a href="RYANSYMES-PORTFOLIO-CLUADECODE.html#skills" data-num="03">Skills</a></li>
+    </ul>
+    <a href="RYANSYMES-PORTFOLIO-CLUADECODE.html#contact" class="nav-cta">Let's Talk</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="page-header-left reveal">
+    <p class="page-label">Full Archive</p>
+    <h1 class="page-title">All<br><em>Work</em></h1>
+  </div>
+  <div class="page-header-right reveal">
+    <div class="project-count">10</div>
+    <p class="project-count-label">Projects</p>
+  </div>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filter —</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="brand-identity">Brand Identity</button>
+  <button class="filter-btn" data-filter="editorial">Editorial</button>
+  <button class="filter-btn" data-filter="web-design">Web Design</button>
+  <button class="filter-btn" data-filter="motion">Motion</button>
+  <button class="filter-btn" data-filter="art-direction">Art Direction</button>
+  <button class="filter-btn" data-filter="product-design">Product Design</button>
+</div>
+
+<!-- WORK ARCHIVE -->
+<section class="work-archive">
+
+  <!-- 1 -->
+  <a href="work-aurum-coffee.html" class="arc-card tilt reveal" data-cats="brand-identity product-design">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-a">
+        <div class="geo">
+          <div class="geo-ring" style="width:200px;height:200px;"></div>
+          <div class="geo-ring" style="width:130px;height:130px;border-style:dashed;"></div>
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect x="10" y="10" width="40" height="40" stroke="rgba(200,168,75,0.4)" stroke-width="0.5"/>
+            <rect x="20" y="20" width="20" height="20" fill="rgba(200,168,75,0.1)" stroke="rgba(200,168,75,0.3)" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2025</div>
+        <div class="arc-card-title">Aurum Coffee Co.</div>
+        <div class="arc-card-cat">Brand Identity · Product Design</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 2 -->
+  <a href="work-verdant-studio.html" class="arc-card tilt reveal" data-cats="brand-identity">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-b">
+        <div class="geo">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+            <polygon points="50,5 95,75 5,75" stroke="rgba(100,180,100,0.25)" stroke-width="0.5" fill="none"/>
+            <polygon points="50,20 80,70 20,70" stroke="rgba(100,180,100,0.15)" stroke-width="0.5" fill="rgba(100,180,100,0.03)"/>
+            <circle cx="50" cy="50" r="15" stroke="rgba(100,180,100,0.2)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2025</div>
+        <div class="arc-card-title">Verdant Studio</div>
+        <div class="arc-card-cat">Logo · Brand System</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 3 -->
+  <a href="work-ember-magazine.html" class="arc-card tilt reveal" data-cats="editorial web-design">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-c">
+        <div class="geo">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="5" y="5" width="70" height="90" stroke="rgba(192,69,42,0.25)" stroke-width="0.5" fill="none"/>
+            <rect x="15" y="30" width="50" height="2" fill="rgba(192,69,42,0.3)"/>
+            <rect x="15" y="38" width="35" height="1" fill="rgba(192,69,42,0.15)"/>
+            <rect x="15" y="44" width="42" height="1" fill="rgba(192,69,42,0.15)"/>
+            <rect x="15" y="50" width="30" height="1" fill="rgba(192,69,42,0.15)"/>
+            <rect x="15" y="15" width="40" height="10" fill="rgba(192,69,42,0.08)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2025</div>
+        <div class="arc-card-title">Ember Magazine</div>
+        <div class="arc-card-cat">Editorial · Web Design</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 4 -->
+  <a href="work-nova-tech.html" class="arc-card tilt reveal" data-cats="art-direction motion">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-d">
+        <div class="geo">
+          <div class="geo-ring" style="width:240px;height:240px;border-color:rgba(80,80,180,0.12);"></div>
+          <div class="geo-ring" style="width:160px;height:160px;border-color:rgba(80,80,180,0.08);border-style:dashed;"></div>
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="20" stroke="rgba(120,120,220,0.3)" stroke-width="0.5" fill="none"/>
+            <line x1="10" y1="30" x2="50" y2="30" stroke="rgba(120,120,220,0.2)" stroke-width="0.5"/>
+            <line x1="30" y1="10" x2="30" y2="50" stroke="rgba(120,120,220,0.2)" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2024</div>
+        <div class="arc-card-title">Nova Tech Rebrand</div>
+        <div class="arc-card-cat">Art Direction · Motion</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 5 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="brand-identity art-direction">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-e">
+        <div class="geo">
+          <div class="geo-ring" style="width:180px;height:180px;border-color:rgba(200,168,75,0.1);"></div>
+          <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
+            <path d="M35 5 L65 60 L5 60 Z" stroke="rgba(200,168,75,0.2)" stroke-width="0.5" fill="none"/>
+            <path d="M35 18 L55 55 L15 55 Z" stroke="rgba(200,168,75,0.1)" stroke-width="0.5" fill="rgba(200,168,75,0.03)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2024</div>
+        <div class="arc-card-title">Côte d'Ambre Hotel</div>
+        <div class="arc-card-cat">Art Direction · Brand Identity</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 6 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="editorial brand-identity">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-f">
+        <div class="geo">
+          <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+            <circle cx="45" cy="45" r="35" stroke="rgba(192,69,42,0.18)" stroke-width="0.5" fill="none"/>
+            <circle cx="45" cy="45" r="22" stroke="rgba(192,69,42,0.12)" stroke-width="0.5" stroke-dasharray="3 4" fill="none"/>
+            <circle cx="45" cy="45" r="8" fill="rgba(192,69,42,0.08)" stroke="rgba(192,69,42,0.2)" stroke-width="0.5"/>
+            <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(192,69,42,0.08)" stroke-width="0.5"/>
+            <line x1="45" y1="10" x2="45" y2="80" stroke="rgba(192,69,42,0.08)" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2024</div>
+        <div class="arc-card-title">Lunar Type Foundry</div>
+        <div class="arc-card-cat">Editorial · Brand Identity</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 7 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="web-design editorial">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-g">
+        <div class="geo">
+          <svg width="120" height="80" viewBox="0 0 120 80" fill="none">
+            <rect x="5" y="5" width="110" height="70" rx="2" stroke="rgba(200,168,75,0.15)" stroke-width="0.5" fill="none"/>
+            <rect x="5" y="5" width="110" height="14" fill="rgba(200,168,75,0.05)" stroke="none"/>
+            <circle cx="14" cy="12" r="3" fill="rgba(200,168,75,0.2)"/>
+            <circle cx="24" cy="12" r="3" fill="rgba(200,168,75,0.1)"/>
+            <circle cx="34" cy="12" r="3" fill="rgba(200,168,75,0.06)"/>
+            <rect x="15" y="26" width="40" height="6" rx="1" fill="rgba(200,168,75,0.1)"/>
+            <rect x="15" y="36" width="65" height="3" rx="1" fill="rgba(200,168,75,0.06)"/>
+            <rect x="15" y="43" width="55" height="3" rx="1" fill="rgba(200,168,75,0.04)"/>
+            <rect x="15" y="50" width="45" height="3" rx="1" fill="rgba(200,168,75,0.04)"/>
+            <rect x="75" y="26" width="35" height="30" rx="1" fill="rgba(200,168,75,0.04)" stroke="rgba(200,168,75,0.1)" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2023</div>
+        <div class="arc-card-title">Meridian City Guide</div>
+        <div class="arc-card-cat">Web Design · Editorial</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 8 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="web-design motion">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-h">
+        <div class="geo">
+          <div class="geo-ring" style="width:160px;height:160px;border-color:rgba(80,120,220,0.14);"></div>
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <path d="M30 10 L50 50 L10 50 Z" stroke="rgba(100,140,240,0.2)" stroke-width="0.5" fill="rgba(100,140,240,0.04)"/>
+            <circle cx="30" cy="30" r="8" stroke="rgba(100,140,240,0.25)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2023</div>
+        <div class="arc-card-title">Pulse Fitness App</div>
+        <div class="arc-card-cat">Web Design · Motion</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 9 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="brand-identity editorial">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-i">
+        <div class="geo">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <rect x="10" y="10" width="60" height="60" stroke="rgba(200,168,75,0.15)" stroke-width="0.5" fill="none"/>
+            <rect x="20" y="20" width="40" height="40" stroke="rgba(200,168,75,0.1)" stroke-width="0.5" stroke-dasharray="2 3" fill="none"/>
+            <circle cx="40" cy="40" r="12" stroke="rgba(200,168,75,0.2)" stroke-width="0.5" fill="rgba(200,168,75,0.04)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2023</div>
+        <div class="arc-card-title">Obsidian Spirits</div>
+        <div class="arc-card-cat">Brand Identity · Editorial</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+  <!-- 10 -->
+  <a href="#" class="arc-card tilt reveal" data-cats="brand-identity art-direction">
+    <div class="arc-card-img">
+      <div class="arc-card-inner vis-j">
+        <div class="geo">
+          <div class="geo-ring" style="width:200px;height:200px;border-color:rgba(80,160,80,0.1);"></div>
+          <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
+            <rect x="15" y="15" width="40" height="40" stroke="rgba(100,180,100,0.2)" stroke-width="0.5" fill="none"/>
+            <rect x="25" y="25" width="20" height="20" fill="rgba(100,180,100,0.05)" stroke="rgba(100,180,100,0.15)" stroke-width="0.5"/>
+            <line x1="15" y1="35" x2="55" y2="35" stroke="rgba(100,180,100,0.08)" stroke-width="0.5"/>
+            <line x1="35" y1="15" x2="35" y2="55" stroke="rgba(100,180,100,0.08)" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="arc-card-info">
+      <div class="arc-card-meta">
+        <div class="arc-card-year">2022</div>
+        <div class="arc-card-title">Rook Architecture</div>
+        <div class="arc-card-cat">Brand Identity · Art Direction</div>
+      </div>
+      <div class="arc-card-arrow">↗</div>
+    </div>
+  </a>
+
+</section>
+
+<footer>
+  <span>© 2026 Ryan Symes</span>
+  <span>Graphic Designer — Ottawa, Ontario</span>
+  <a href="RYANSYMES-PORTFOLIO-CLUADECODE.html" style="color:var(--gold);text-decoration:none;letter-spacing:0.15em;font-size:0.6rem;text-transform:uppercase;">← Back to Home</a>
+</footer>
+
+<script>
+// ── CURSOR
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function raf() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursor.style.left = mx + 'px'; cursor.style.top  = my + 'px';
+  ring.style.left   = rx + 'px'; ring.style.top    = ry + 'px';
+  requestAnimationFrame(raf);
+})();
+document.querySelectorAll('a, button, .arc-card').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+// ── NAV DROPDOWN
+document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
+  trigger.addEventListener('click', e => {
+    const wrap = trigger.closest('.nav-dropdown-wrap');
+    const isOpen = wrap.classList.contains('open');
+    document.querySelectorAll('.nav-dropdown-wrap.open').forEach(w => w.classList.remove('open'));
+    if (!isOpen) { e.preventDefault(); wrap.classList.add('open'); }
+  });
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.nav-dropdown-wrap')) {
+    document.querySelectorAll('.nav-dropdown-wrap.open').forEach(w => w.classList.remove('open'));
+  }
+});
+
+// ── FILTER
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.arc-card').forEach(card => {
+      if (filter === 'all' || card.dataset.cats.includes(filter)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+
+// ── TILT
+document.querySelectorAll('.tilt').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    card.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 6}deg) scale(1.02)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(800px) rotateY(0) rotateX(0) scale(1)';
+    card.style.transition = 'transform 0.6s ease';
+  });
+  card.addEventListener('mouseenter', () => { card.style.transition = 'transform 0.1s ease'; });
+});
+
+// ── REVEAL
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
