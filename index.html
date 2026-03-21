@@ -1002,6 +1002,21 @@
   }
   .slideshow-dot.active { background: var(--rust); }
 
+  /* ── SLIDESHOW ARROWS (hidden on desktop, shown on mobile) ── */
+  .slide-arrow {
+    display: none;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 20; background: rgba(7,9,14,0.7);
+    border: 1px solid rgba(198,146,20,0.4);
+    color: var(--cream); font-size: 1.8rem; line-height: 1;
+    width: 36px; height: 48px; cursor: pointer;
+    align-items: center; justify-content: center;
+    padding: 0; transition: background 0.2s, border-color 0.2s;
+  }
+  .slide-arrow:active { background: rgba(204,18,48,0.4); border-color: var(--rust); }
+  .slide-arrow--prev { left: 0.5rem; }
+  .slide-arrow--next { right: 0.5rem; }
+
   /* ── UNAVAILABLE DOT ── */
   .nav-avail-dot--off {
     background: #c0452a;
@@ -1156,25 +1171,32 @@
     /* ABOUT */
     #about { grid-template-columns: 1fr; gap: 2.5rem; }
     .about-visual {
-      height: 420px;
-      width: 92%;
-      max-width: 380px;
+      height: 380px;
+      width: 94%;
+      max-width: 400px;
       margin: 1.5rem auto;
-      overflow: visible;
+      overflow: hidden;
     }
-    /* pull decorative frames in tighter so they don't get clipped */
-    .about-frame-2 { bottom: -1rem; right: -1rem; width: 60%; height: 52%; }
-    .about-frame-3 { top: -1rem; left: -1rem; width: 38%; height: 32%; }
-    /* center all slide images on mobile regardless of per-slide overrides */
-    .slideshow-slide img { object-position: center center !important; object-fit: cover !important; }
+    /* hide decorative offset frames on mobile — they clip outside the card */
+    .about-frame-2 { display: none; }
+    .about-frame-3 { display: none; }
+    /* images: contain so full photo is visible regardless of shape */
+    .slideshow-slide img {
+      object-fit: contain !important;
+      object-position: center center !important;
+      background: #07090e;
+    }
     /* ensure slideshow fills its container */
     .slideshow, .slideshow-track, .slideshow-slide { height: 100% !important; }
     /* compact nameplate */
-    .card-nameplate { padding: 1rem 0.9rem 0.4rem; bottom: 1.8rem; }
+    .card-nameplate { padding: 1rem 0.9rem 0.4rem; bottom: 0; left: 0; right: 0; border-top: 2px solid var(--rust); }
     .cn-name { font-size: 1rem; }
     .cn-pos { font-size: 0.48rem; }
+    /* slide arrows on mobile */
+    .slide-arrow { display: flex; }
     /* bigger tap targets for dots on mobile */
-    .slideshow-dot { width: 20px; height: 6px; cursor: pointer; }
+    .slideshow-dots { bottom: 0.5rem; right: 0.8rem; gap: 0.5rem; }
+    .slideshow-dot { width: 22px; height: 6px; }
     .stats-row { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
     .stat-wrap { text-align: center; }
     .stat-num { font-size: 2.2rem; }
@@ -1226,12 +1248,10 @@
     .skill-cell:nth-child(2n) { border-right: 1px solid var(--border); }
     .nav-avail { display: none; }
     .nav-logo { font-size: 1.4rem; }
-    /* slideshow on tiny phones — full width, fixed height */
-    .about-visual { width: 96%; height: 360px; max-width: none; }
-    .about-frame-2 { display: none; }
-    .about-frame-3 { display: none; }
-    .cn-name { font-size: 0.9rem; }
-    .card-nameplate { padding: 0.8rem 0.75rem 0.35rem; bottom: 1.5rem; }
+    /* slideshow on tiny phones */
+    .about-visual { width: 98%; height: 320px; max-width: none; }
+    .cn-name { font-size: 0.85rem; }
+    .card-nameplate { padding: 0.7rem 0.7rem 0.3rem; }
     .slideshow-dot { width: 18px; height: 5px; }
   }
 </style>
@@ -1505,6 +1525,8 @@
           <div class="cn-name">Ryan Symes</div>
           <div class="cn-pos">Graphic Designer · Ottawa, ON</div>
         </div>
+        <button class="slide-arrow slide-arrow--prev" id="slide-prev" aria-label="Previous">&#8249;</button>
+        <button class="slide-arrow slide-arrow--next" id="slide-next" aria-label="Next">&#8250;</button>
         <div class="slideshow-dots" id="slideshow-dots">
           <button class="slideshow-dot active" data-index="0"></button>
           <button class="slideshow-dot" data-index="1"></button>
@@ -1847,6 +1869,10 @@ if (hamburger && mobileMenu) {
     goTo(i);
     timer = setInterval(() => goTo(current + 1), 4000);
   }));
+  const prevBtn = document.getElementById('slide-prev');
+  const nextBtn = document.getElementById('slide-next');
+  if (prevBtn) prevBtn.addEventListener('click', () => { clearInterval(timer); goTo(current - 1); timer = setInterval(() => goTo(current + 1), 4000); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { clearInterval(timer); goTo(current + 1); timer = setInterval(() => goTo(current + 1), 4000); });
   // Touch/swipe support for mobile
   let touchStartX = 0;
   let touchStartY = 0;
