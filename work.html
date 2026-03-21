@@ -449,9 +449,71 @@
   }
   .reveal.in-view { opacity: 1; transform: none; }
 
+  /* ── HAMBURGER ── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column; justify-content: center; gap: 5px;
+    width: 28px; height: 28px;
+    background: none; border: none; cursor: pointer; padding: 0;
+    flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block; width: 100%; height: 1.5px;
+    background: var(--cream); transition: transform 0.25s, opacity 0.25s;
+    transform-origin: center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ── MOBILE MENU ── */
+  .mobile-menu {
+    position: absolute; top: calc(100% + 0.6rem); right: 1.2rem;
+    background: rgba(7,9,14,0.97);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    min-width: 220px;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .mobile-menu::before {
+    content: '';
+    position: absolute; top: -5px; right: 1rem;
+    width: 8px; height: 8px;
+    background: var(--gold); opacity: 0.6;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+  .mobile-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+  /* ── MOBILE WORK SUB-MENU ── */
+  .mob-work-trigger {
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mob-work-trigger .ndi-label { display: flex; align-items: center; gap: 0.4em; }
+  .mob-chevron {
+    display: inline-flex; align-items: center;
+    font-size: 0.8em; line-height: 1;
+    transition: transform 0.25s ease;
+    transform-origin: center 50%;
+  }
+  .mob-work-trigger.open .mob-chevron { transform: rotate(180deg); }
+  .mob-work-sub {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(255,255,255,0.02);
+  }
+  .mob-work-sub.open { max-height: 200px; }
+  .mob-sub-item { padding-left: 2.4rem !important; border-top: 1px solid var(--border); }
+
   @media (max-width: 768px) {
     body { cursor: auto; }
     #cursor, #cursor-ring, #cursor-hey { display: none; }
+    nav { padding: 1rem 1.2rem; position: relative; }
+    .nav-right { display: none; }
+    .nav-hamburger { display: flex; }
   }
 </style>
 </head>
@@ -464,7 +526,7 @@
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-left">
-    <a href="index.html" class="nav-logo">RS</a>
+    <a href="index.html" class="nav-logo">SD</a>
     <span class="nav-avail"><span class="nav-avail-dot"></span>Available</span>
   </div>
   <div class="nav-right">
@@ -486,6 +548,39 @@
       <li><a href="index.html#skills" data-num="03">Skills</a></li>
     </ul>
     <a href="index.html#contact" class="nav-cta">Contact</a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mob-work-trigger nav-dropdown-item" id="mob-work-trigger">
+      <div>
+        <span class="ndi-label">Work <span class="mob-chevron">&#8964;</span></span>
+        <span class="ndi-sub">Selected projects</span>
+      </div>
+    </div>
+    <div class="mob-work-sub" id="mob-work-sub">
+      <a href="index.html#work" class="nav-dropdown-item mob-sub-item">
+        <span class="ndi-label">Featured Work</span>
+        <span class="ndi-sub">Selected projects</span>
+      </a>
+      <a href="work.html" class="nav-dropdown-item mob-sub-item">
+        <span class="ndi-label">All Work</span>
+        <span class="ndi-sub">Full archive</span>
+      </a>
+    </div>
+    <a href="index.html#about" class="nav-dropdown-item">
+      <span class="ndi-label">About</span>
+      <span class="ndi-sub">Who I am</span>
+    </a>
+    <a href="index.html#skills" class="nav-dropdown-item">
+      <span class="ndi-label">Skills</span>
+      <span class="ndi-sub">What I do best</span>
+    </a>
+    <a href="index.html#contact" class="nav-dropdown-item">
+      <span class="ndi-label">Contact</span>
+      <span class="ndi-sub">Get in touch</span>
+    </a>
   </div>
 </nav>
 
@@ -815,6 +910,41 @@ document.addEventListener('click', e => {
     ring.style.opacity = '1';
   }, 900);
 });
+
+// ── HAMBURGER MENU
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+if (hamburger && mobileMenu) {
+  hamburger.addEventListener('click', e => {
+    e.stopPropagation();
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.getElementById('mob-work-sub')?.classList.remove('open');
+      document.getElementById('mob-work-trigger')?.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#hamburger') && !e.target.closest('#mobile-menu')) {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+  });
+}
+// ── MOBILE WORK SUB-MENU
+const mobWorkTrigger = document.getElementById('mob-work-trigger');
+const mobWorkSub = document.getElementById('mob-work-sub');
+if (mobWorkTrigger && mobWorkSub) {
+  mobWorkTrigger.addEventListener('click', e => {
+    e.stopPropagation();
+    mobWorkTrigger.classList.toggle('open');
+    mobWorkSub.classList.toggle('open');
+  });
+}
 
 // ── NAV DROPDOWN
 document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {

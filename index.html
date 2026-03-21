@@ -609,8 +609,12 @@
   .about-visual:hover .portrait-photo { transform: scale(1.04); }
   .portrait-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(7,9,14,0.45) 0%, transparent 50%);
     pointer-events: none;
+    /* base vignette + bottom fade for all slides */
+    background:
+      radial-gradient(ellipse at center, transparent 40%, rgba(7,9,14,0.55) 100%),
+      linear-gradient(to top, rgba(7,9,14,0.75) 0%, transparent 55%),
+      linear-gradient(to bottom, rgba(7,9,14,0.2) 0%, transparent 25%);
   }
 
   .about-text .section-title { margin-bottom: 2rem; }
@@ -837,6 +841,28 @@
   /* ── TILT CARDS (JS) ── */
   .tilt { transform-style: preserve-3d; }
 
+  /* ── MOBILE WORK SUB-MENU ── */
+  .mob-work-trigger {
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mob-work-trigger .ndi-label { display: flex; align-items: center; gap: 0.4em; }
+  .mob-chevron {
+    display: inline-flex; align-items: center;
+    font-size: 0.8em; line-height: 1;
+    transition: transform 0.25s ease;
+    transform-origin: center 50%;
+  }
+  .mob-work-trigger.open .mob-chevron { transform: rotate(180deg); }
+  .mob-work-sub {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(255,255,255,0.02);
+  }
+  .mob-work-sub.open { max-height: 200px; }
+  .mob-sub-item { padding-left: 2.4rem !important; border-top: 1px solid var(--border); }
+  .mob-sub-item:first-child { border-top: 1px solid var(--border); }
+
   /* ── HAMBURGER BUTTON ── */
   .nav-hamburger {
     display: none;
@@ -907,7 +933,42 @@
     width: 100%; height: 100%;
     object-fit: cover; object-position: center top;
     display: block;
-    filter: contrast(1.05) brightness(0.92);
+    filter: contrast(1.08) brightness(0.88) saturate(1.1);
+    transition: filter 0.6s ease;
+  }
+  /* Slide 1 (Ryan) — cool blue tint, studio feel */
+  .slideshow-slide:nth-child(1) .portrait-overlay {
+    background:
+      radial-gradient(ellipse at center, transparent 35%, rgba(7,9,14,0.6) 100%),
+      linear-gradient(to top, rgba(7,9,14,0.8) 0%, transparent 55%),
+      linear-gradient(to bottom, rgba(7,9,14,0.25) 0%, transparent 30%),
+      linear-gradient(160deg, rgba(10,20,40,0.18) 0%, transparent 60%);
+  }
+  /* Slide 2 (Sean) — warm event lighting */
+  .slideshow-slide:nth-child(2) .portrait-overlay {
+    background:
+      radial-gradient(ellipse at center, transparent 35%, rgba(7,9,14,0.5) 100%),
+      linear-gradient(to top, rgba(7,9,14,0.8) 0%, transparent 55%),
+      linear-gradient(to bottom, rgba(7,9,14,0.2) 0%, transparent 30%),
+      linear-gradient(135deg, rgba(198,100,20,0.12) 0%, transparent 50%);
+  }
+  /* Slide 3 (Gabe) — outdoor sky, cool top, warm bottom */
+  .slideshow-slide:nth-child(3) .portrait-overlay {
+    background:
+      radial-gradient(ellipse at center, transparent 30%, rgba(7,9,14,0.55) 100%),
+      linear-gradient(to top, rgba(7,9,14,0.85) 0%, transparent 50%),
+      linear-gradient(to bottom, rgba(10,30,60,0.3) 0%, transparent 35%);
+  }
+
+  /* Sean — center the shot */
+  .slideshow-slide:nth-child(2) img {
+    object-position: center center;
+    filter: contrast(1.1) brightness(0.85) saturate(1.2) warmth(1);
+  }
+  /* Gabe — outdoor shot, punch up the sky */
+  .slideshow-slide:nth-child(3) img {
+    object-position: center 20%;
+    filter: contrast(1.12) brightness(0.9) saturate(1.15);
   }
   /* card nameplate */
   .card-nameplate {
@@ -1169,7 +1230,7 @@
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-left">
-    <a href="index.html" class="nav-logo">RS</a>
+    <a href="index.html" class="nav-logo">SD</a>
     <div class="nav-avail-wrap">
       <span class="nav-avail"><span class="nav-avail-dot nav-avail-dot--off"></span>Unavailable for Work</span>
       <span class="nav-avail nav-avail--clickable" id="internship-btn"><span class="nav-avail-dot"></span>Available for Internships</span>
@@ -1215,10 +1276,22 @@
     <span></span><span></span><span></span>
   </button>
   <div class="mobile-menu" id="mobile-menu">
-    <a href="#work" class="nav-dropdown-item">
-      <span class="ndi-label">Work</span>
-      <span class="ndi-sub">Selected projects</span>
-    </a>
+    <div class="mob-work-trigger nav-dropdown-item" id="mob-work-trigger">
+      <div>
+        <span class="ndi-label">Work <span class="mob-chevron">&#8964;</span></span>
+        <span class="ndi-sub">Selected projects</span>
+      </div>
+    </div>
+    <div class="mob-work-sub" id="mob-work-sub">
+      <a href="#work" class="nav-dropdown-item mob-sub-item">
+        <span class="ndi-label">Featured Work</span>
+        <span class="ndi-sub">Selected projects</span>
+      </a>
+      <a href="work.html" class="nav-dropdown-item mob-sub-item">
+        <span class="ndi-label">All Work</span>
+        <span class="ndi-sub">Full archive</span>
+      </a>
+    </div>
     <a href="#about" class="nav-dropdown-item">
       <span class="ndi-label">About</span>
       <span class="ndi-sub">Who I am</span>
@@ -1240,7 +1313,7 @@
 
   <div>
     <p class="hero-tag">✦ Available for projects — 2026</p>
-    <h1 class="hero-name">Ryan<br><em>Symes</em></h1>
+    <h1 class="hero-name">Symes<br><em>Design</em></h1>
   </div>
 
   <div class="hero-bottom">
@@ -1397,19 +1470,19 @@
     <div class="about-frame about-frame-1">
       <div class="slideshow" id="about-slideshow">
         <div class="slideshow-track" id="slideshow-track">
-          <!-- Slide 1 — current photo -->
-          <div class="slideshow-slide">
+          <!-- Slide 1 — Ryan -->
+          <div class="slideshow-slide" data-name="Ryan Symes" data-pos="Graphic Designer · Ottawa, ON">
             <img src="photos/website%20image.%20of%20me%20.png" alt="Ryan Symes">
             <div class="portrait-overlay"></div>
           </div>
-          <!-- Slide 2 — replace src with your second photo filename -->
-          <div class="slideshow-slide">
-            <img src="photos/website%20image.%20of%20me%20.png" alt="Ryan Symes">
+          <!-- Slide 2 — Sean -->
+          <div class="slideshow-slide" data-name="Sean Symes" data-pos="Creative Director">
+            <img src="photos/IMG_1387.jpeg" alt="Sean Symes">
             <div class="portrait-overlay"></div>
           </div>
-          <!-- Slide 3 — replace src with your third photo filename -->
-          <div class="slideshow-slide">
-            <img src="photos/website%20image.%20of%20me%20.png" alt="Ryan Symes">
+          <!-- Slide 3 — Gabe -->
+          <div class="slideshow-slide" data-name="Gabe Symes" data-pos="Talent Recruiter">
+            <img src="photos/IMG_3297.jpeg" alt="Gabe Symes">
             <div class="portrait-overlay"></div>
           </div>
         </div>
@@ -1429,12 +1502,12 @@
 
   <div class="about-text reveal">
     <p class="section-label">About</p>
-    <h2 class="section-title">Design that<br><em style="font-style:italic;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold)">speaks volumes</em></h2>
+    <h2 class="section-title">The team<br><em style="font-style:italic;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold)">behind the work</em></h2>
     <p class="about-bio">
-      Based in <strong>Ottawa, Ontario</strong>, I'm a graphic designer with over <strong>4 years</strong> of experience translating complex ideas into visual languages that stick. I've built brands for independent studios and global companies alike, always starting with the same question — <strong>what do you want people to feel?</strong>
+      I'm <strong>Ryan Symes</strong> — a graphic designer based in <strong>Ottawa, Ontario</strong>, studying at <strong>Algonquin College</strong> and obsessed with building brands that hit hard. I specialise in <strong>sports design, motion graphics, and brand identity</strong> — work that lives at the intersection of high-energy culture and sharp visual thinking.
     </p>
     <p class="about-bio">
-      A graduate of <strong>Algonquin College</strong>, my obsession with <strong>sports design and motion graphics</strong> runs deep — my work lives at the intersection of high-energy branding and intuitive creativity.
+      What makes us different is simple — we're <strong>family</strong>. <strong>Sean Symes</strong> leads creative direction and <strong>Gabe Symes</strong> drives talent and relationships. We've grown up competing, pushing each other, and holding each other to a higher standard every single day. That's not something you can fake, and it shows in everything we put out. <strong>Family is the foundation — that's what makes us so strong.</strong>
     </p>
     <div class="stats-row">
       <div class="stat-wrap has-tooltip">
@@ -1477,7 +1550,7 @@
         </div>
       </div>
     </div>
-    <a href="#contact" class="hero-cta"><span>Work with Me</span><span>→</span></a>
+    <a href="#contact" class="hero-cta"><span>Work with Us</span><span>→</span></a>
   </div>
 </section>
 
@@ -1722,6 +1795,8 @@ if (hamburger && mobileMenu) {
     link.addEventListener('click', () => {
       hamburger.classList.remove('open');
       mobileMenu.classList.remove('open');
+      document.getElementById('mob-work-sub')?.classList.remove('open');
+      document.getElementById('mob-work-trigger')?.classList.remove('open');
     });
   });
   document.addEventListener('click', e => {
@@ -1736,14 +1811,21 @@ if (hamburger && mobileMenu) {
 (function() {
   const track = document.getElementById('slideshow-track');
   const dots  = document.querySelectorAll('.slideshow-dot');
+  const cnName = document.querySelector('.cn-name');
+  const cnPos  = document.querySelector('.cn-pos');
   if (!track) return;
-  const total = track.children.length;
+  const slides = Array.from(track.children);
+  const total = slides.length;
   let current = 0;
   let timer;
   function goTo(n) {
     current = (n + total) % total;
     track.style.transform = 'translateX(-' + (current * 100) + '%)';
     dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    if (cnName && cnPos) {
+      cnName.textContent = slides[current].dataset.name || '';
+      cnPos.textContent  = slides[current].dataset.pos  || '';
+    }
   }
   dots.forEach((dot, i) => dot.addEventListener('click', () => {
     clearInterval(timer);
@@ -1777,6 +1859,17 @@ function sendInternshipEmail() {
   const body = 'From: ' + name + '\n\n' + message;
   window.location.href = 'mailto:ryansymes11@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   internshipPanel.classList.remove('open');
+}
+
+// ── MOBILE WORK SUB-MENU
+const mobWorkTrigger = document.getElementById('mob-work-trigger');
+const mobWorkSub = document.getElementById('mob-work-sub');
+if (mobWorkTrigger && mobWorkSub) {
+  mobWorkTrigger.addEventListener('click', e => {
+    e.stopPropagation();
+    mobWorkTrigger.classList.toggle('open');
+    mobWorkSub.classList.toggle('open');
+  });
 }
 
 // ── CONTACT CTA DROPDOWN
