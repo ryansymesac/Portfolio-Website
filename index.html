@@ -1155,18 +1155,23 @@
 
     /* ABOUT */
     #about { grid-template-columns: 1fr; gap: 2.5rem; }
-    /* Center the whole visual block and make it slightly smaller */
     .about-visual {
       height: auto;
-      aspect-ratio: 3 / 4;
-      max-height: 380px;
-      width: 72%;
-      margin: 0 auto;
+      aspect-ratio: 4 / 5;
+      width: 90%;
+      max-width: 360px;
+      margin: 1.5rem auto;
       overflow: visible;
     }
-    /* Slightly larger decorative frame offsets so squares are more visible */
-    .about-frame-2 { bottom: -1.6rem; right: -1.6rem; width: 65%; height: 58%; }
-    .about-frame-3 { top: -1.4rem; left: -1.4rem; width: 44%; height: 38%; }
+    /* pull decorative frames in tighter so they don't get clipped */
+    .about-frame-2 { bottom: -1rem; right: -1rem; width: 60%; height: 52%; }
+    .about-frame-3 { top: -1rem; left: -1rem; width: 38%; height: 32%; }
+    /* center all slide images on mobile regardless of per-slide overrides */
+    .slideshow-slide img { object-position: center center !important; }
+    /* compact nameplate */
+    .card-nameplate { padding: 1rem 0.9rem 0.4rem; bottom: 1.8rem; }
+    .cn-name { font-size: 1rem; }
+    .cn-pos { font-size: 0.48rem; }
     .stats-row { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
     .stat-wrap { text-align: center; }
     .stat-num { font-size: 2.2rem; }
@@ -1218,6 +1223,12 @@
     .skill-cell:nth-child(2n) { border-right: 1px solid var(--border); }
     .nav-avail { display: none; }
     .nav-logo { font-size: 1.4rem; }
+    /* slideshow on tiny phones — full width, shorter card */
+    .about-visual { width: 96%; aspect-ratio: 3 / 4; }
+    .about-frame-2 { display: none; }
+    .about-frame-3 { display: none; }
+    .cn-name { font-size: 0.9rem; }
+    .card-nameplate { padding: 0.8rem 0.75rem 0.35rem; bottom: 1.5rem; }
   }
 </style>
 </head>
