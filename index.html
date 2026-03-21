@@ -963,7 +963,7 @@
   /* Sean — center the shot */
   .slideshow-slide:nth-child(2) img {
     object-position: center center;
-    filter: contrast(1.1) brightness(0.85) saturate(1.2) warmth(1);
+    filter: contrast(1.1) brightness(0.85) saturate(1.2) hue-rotate(5deg);
   }
   /* Gabe — outdoor shot, punch up the sky */
   .slideshow-slide:nth-child(3) img {
@@ -1156,10 +1156,9 @@
     /* ABOUT */
     #about { grid-template-columns: 1fr; gap: 2.5rem; }
     .about-visual {
-      height: auto;
-      aspect-ratio: 4 / 5;
-      width: 90%;
-      max-width: 360px;
+      height: 420px;
+      width: 92%;
+      max-width: 380px;
       margin: 1.5rem auto;
       overflow: visible;
     }
@@ -1167,11 +1166,15 @@
     .about-frame-2 { bottom: -1rem; right: -1rem; width: 60%; height: 52%; }
     .about-frame-3 { top: -1rem; left: -1rem; width: 38%; height: 32%; }
     /* center all slide images on mobile regardless of per-slide overrides */
-    .slideshow-slide img { object-position: center center !important; }
+    .slideshow-slide img { object-position: center center !important; object-fit: cover !important; }
+    /* ensure slideshow fills its container */
+    .slideshow, .slideshow-track, .slideshow-slide { height: 100% !important; }
     /* compact nameplate */
     .card-nameplate { padding: 1rem 0.9rem 0.4rem; bottom: 1.8rem; }
     .cn-name { font-size: 1rem; }
     .cn-pos { font-size: 0.48rem; }
+    /* bigger tap targets for dots on mobile */
+    .slideshow-dot { width: 20px; height: 6px; cursor: pointer; }
     .stats-row { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
     .stat-wrap { text-align: center; }
     .stat-num { font-size: 2.2rem; }
@@ -1223,12 +1226,13 @@
     .skill-cell:nth-child(2n) { border-right: 1px solid var(--border); }
     .nav-avail { display: none; }
     .nav-logo { font-size: 1.4rem; }
-    /* slideshow on tiny phones — full width, shorter card */
-    .about-visual { width: 96%; aspect-ratio: 3 / 4; }
+    /* slideshow on tiny phones — full width, fixed height */
+    .about-visual { width: 96%; height: 360px; max-width: none; }
     .about-frame-2 { display: none; }
     .about-frame-3 { display: none; }
     .cn-name { font-size: 0.9rem; }
     .card-nameplate { padding: 0.8rem 0.75rem 0.35rem; bottom: 1.5rem; }
+    .slideshow-dot { width: 18px; height: 5px; }
   }
 </style>
 </head>
@@ -1843,6 +1847,22 @@ if (hamburger && mobileMenu) {
     goTo(i);
     timer = setInterval(() => goTo(current + 1), 4000);
   }));
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  let touchStartY = 0;
+  track.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      clearInterval(timer);
+      goTo(dx < 0 ? current + 1 : current - 1);
+      timer = setInterval(() => goTo(current + 1), 4000);
+    }
+  }, { passive: true });
   timer = setInterval(() => goTo(current + 1), 4000);
 })();
 
